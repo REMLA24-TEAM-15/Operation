@@ -2,7 +2,7 @@
 
 -- Michal Raczkiewicz --
 Created PR: [https://github.com/mitalipatil99/REMLA-TEAM-15/pull/3](https://github.com/REMLA24-TEAM-15/model-service/pull/1), https://github.com/REMLA24-TEAM-15/app/pull/1
-Approved PR: 
+Approved PR: https://github.com/REMLA24-TEAM-15/lib-version/pull/1
 
 -- Marianna Louizidou --
 Created PR:
