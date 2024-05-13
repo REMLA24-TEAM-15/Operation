@@ -5,17 +5,16 @@ Created PR: [https://github.com/mitalipatil99/REMLA-TEAM-15/pull/3](https://gith
 Approved PR: https://github.com/REMLA24-TEAM-15/lib-version/pull/1
 
 -- Marianna Louizidou --
-Created PR:
-Approved PR:
+Created PR: https://github.com/REMLA24-TEAM-15/lib-version/pull/1
+Approved PR: https://github.com/REMLA24-TEAM-15/app/pull/3
 
 -- Mitali Patil --
 Created PR: https://github.com/REMLA24-TEAM-15/model-service/pull/2
 Approved PR: https://github.com/REMLA24-TEAM-15/lib-version/pull/2
 
 -- Shantnav  Agarwal --
-Created PR:
-Approved PR:
-
+Created PR: https://github.com/REMLA24-TEAM-15/model-training/pull/7
+Approved PR: https://github.com/REMLA24-TEAM-15/model-service/pull/2
 
 # A1
 
