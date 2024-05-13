@@ -9,8 +9,8 @@ Created PR:
 Approved PR:
 
 -- Mitali Patil --
-Created PR:
-Approved PR:
+Created PR: https://github.com/REMLA24-TEAM-15/model-service/pull/2
+Approved PR: https://github.com/REMLA24-TEAM-15/lib-version/pull/2
 
 -- Shantnav  Agarwal --
 Created PR:
