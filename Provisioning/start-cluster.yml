@@ -1,0 +1,43 @@
+---
+- hosts: controler
+  become: yes
+  tasks:
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    #- name: Add ansible user to docker group
+    #  user:
+    #    name: "{{ ansible_user }}"
+    #    groups: docker
+    #    append: yes
+
+    - name: Install minikube
+      apt:
+        deb: "https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb"
+        state: present
+
+    - name: Download helm
+      unarchive:
+        src: "https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz"
+        remote_src: yes
+        dest: /tmp
+      notify:
+        - Install helm
+
+    - name: Start minikube
+      command: minikube start --driver=docker
+
+  handlers:
+    - name: Install helm
+      copy:
+        src: /tmp/linux-amd64/helm
+        remote_src: yes
+        dest: /usr/local/bin/helm
+        mode: "0755"
