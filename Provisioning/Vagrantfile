@@ -10,10 +10,20 @@ Vagrant.configure("2") do |config|
     controler.vm.box_check_update = false
 
     controler.vm.network "private_network", ip: "192.168.56.0"
+    controler.vm.network "forwarded_port", guest: 22, host: 2200, disabled: true
 
     controler.vm.provider "virtualbox" do |v|
       v.memory = 4096
       v.cpus = 1
+    end
+
+    # Add public key so ansible can log in without a password
+    current_dir = File.expand_path(File.dirname(__FILE__))
+    controler.vm.provision "shell" do |s|
+      ssh_pub_key = File.readlines("#{current_dir}/Keys/vagrant-key.pub").first.strip
+      s.inline = <<-SHELL
+        echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+      SHELL
     end
   end
 
@@ -26,10 +36,19 @@ Vagrant.configure("2") do |config|
       worker.vm.box_check_update = false
 
       worker.vm.network "private_network", ip: "192.168.56.#{i}"
+      worker.vm.network "forwarded_port", guest: 22, host: (2200 + i), disabled: true
 
       worker.vm.provider "virtualbox" do |v|
         v.memory = 6144
         v.cpus = 2
+      end
+
+      current_dir = File.expand_path(File.dirname(__FILE__))
+      worker.vm.provision "shell" do |s|
+        ssh_pub_key = File.readlines("#{current_dir}/Keys/vagrant-key.pub").first.strip
+        s.inline = <<-SHELL
+          echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+        SHELL
       end
     end
   end
