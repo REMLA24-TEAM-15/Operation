@@ -1,0 +1,13 @@
+---
+- name: Install Helm packages
+  hosts: controler
+  tasks:
+    - name: Add Prometheus Helm repository
+      command: helm repo add prom-repo https://prometheus-community.github.io/helm-charts
+
+    - name: Update Helm repositories
+      command: helm repo update
+
+    - name: Install Prometheus stack
+      command: helm install myprom prom-repo/kube-prometheus-stack
+

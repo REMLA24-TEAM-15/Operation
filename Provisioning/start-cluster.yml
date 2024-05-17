@@ -23,24 +23,24 @@
         deb: "https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb"
         state: present
 
-    - name: Download helm
-      unarchive:
-        src: "https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz"
-        remote_src: yes
-        dest: /tmp
-      notify:
-        - Install helm
+    - name: Install kubectl
+      command: snap install kubectl --classic
+
+    - name: Install helm
+      command: sudo snap install helm --classic
 
 - hosts: localhost
   tasks:
     - name: Start minikube
-      ansible.builtin.shell:
-        cmd: "minikube start --driver=docker"
+      command: "ssh vagrant@localhost -p2222 minikube start --driver=docker"
 
-  handlers:
-    - name: Install helm
-      copy:
-        src: /tmp/linux-amd64/helm
-        remote_src: yes
-        dest: /usr/local/bin/helm
-        mode: "0755"
+- hosts: controler
+  tasks:
+    - name: Add Prometheus Helm repository
+      command: helm repo add prom-repo https://prometheus-community.github.io/helm-charts
+
+    - name: Update Helm repositories
+      command: helm repo update
+
+    - name: Install Prometheus stack
+      command: helm install myprom prom-repo/kube-prometheus-stack
