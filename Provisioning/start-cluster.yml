@@ -12,11 +12,11 @@
         name: docker.io
         state: present
 
-    #- name: Add ansible user to docker group
-    #  user:
-    #    name: "{{ ansible_user }}"
-    #    groups: docker
-    #    append: yes
+    - name: Add ansible user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
 
     - name: Install minikube
       apt:
@@ -31,8 +31,11 @@
       notify:
         - Install helm
 
+- hosts: localhost
+  tasks:
     - name: Start minikube
-      command: minikube start --driver=docker
+      ansible.builtin.shell:
+        cmd: "minikube start --driver=docker"
 
   handlers:
     - name: Install helm
