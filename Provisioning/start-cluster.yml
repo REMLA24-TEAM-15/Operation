@@ -1,5 +1,5 @@
 ---
-- hosts: controler
+- hosts: controler, workers
   become: yes
   tasks:
 
@@ -26,21 +26,33 @@
     - name: Install kubectl
       command: snap install kubectl --classic
 
-    - name: Install helm
-      command: sudo snap install helm --classic
-
 - hosts: localhost
   tasks:
-    - name: Start minikube
+    - name: Start minikube on controler
+      poll: 0
       command: "ssh vagrant@localhost -p2222 minikube start --driver=docker"
+
+    - name: Start minikube on all workers
+      poll: 0
+      command: "ssh vagrant@localhost -p220{{ item }} minikube start --driver=docker"
+      with_sequence: start=0 end={{ groups['workers'] | length | int - 1 }}
 
 - hosts: controler
   tasks:
+    - name: Install helm
+      command: sudo snap install helm --classic
+
     - name: Add Prometheus Helm repository
       command: helm repo add prom-repo https://prometheus-community.github.io/helm-charts
 
     - name: Update Helm repositories
       command: helm repo update
 
-    - name: Install Prometheus stack
+    - name: Check if Prometheus stack is installed
+      shell: helm list -q | grep -w myprom
+      register: helm_check
+
+    - name: Install Prometheus stack if not installed
       command: helm install myprom prom-repo/kube-prometheus-stack
+      when: helm_check.rc != 0
+      ignore_errors: true
