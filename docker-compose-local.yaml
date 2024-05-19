@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    image: ghcr.io/remla24-team-15/app:latest
+    build: ../app
     container_name: app
     ports:
       - "8080:8080"
@@ -11,7 +11,7 @@ services:
 
 
   model-service:
-    image: ghcr.io/remla24-team-15/model-service:latest
+    build: ../model-service/
     container_name: modelservice
     ports:
       - "8081:8081"
