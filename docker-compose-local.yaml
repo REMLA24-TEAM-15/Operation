@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  app:
+    build: ../app
+    container_name: app
+    ports:
+      - "8080:8080"
+    environment:
+      - MODEL_SERVICE_URI=http://modelservice:8081/
+
+
+  model-service:
+    build: ../model-service/
+    container_name: modelservice
+    ports:
+      - "8081:8081"
