@@ -1,3 +1,21 @@
+# A3
+
+-- Michal Raczkiewicz --
+Created PR: https://github.com/REMLA24-TEAM-15/Operation/pull/1
+Approved PR: 
+
+-- Marianna Louizidou --
+Created PR:
+Approved PR:
+
+-- Mitali Patil --
+Created PR:
+Approved PR:
+
+-- Shantnav Agarwal --
+Created PR:
+Approved PR:
+
 # A2
 
 -- Michal Raczkiewicz --
