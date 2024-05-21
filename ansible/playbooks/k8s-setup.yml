@@ -20,7 +20,7 @@
   tasks:
     - name: Install k3s server
       shell: |
-        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik --write-kubeconfig-mode=644 --node-external-ip 192.168.56.2 --flannel-external-ip 192.168.56.2" sh -
+        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik --write-kubeconfig-mode=644 --node-external-ip 192.168.56.0 --flannel-external-ip 192.168.56.0" sh -
       args:
         executable: /bin/bash
 
@@ -65,6 +65,7 @@
       shell: |
         kubectl apply -f /vagrant/kubernetes/node_deployment.yaml
         kubectl apply -f /vagrant/kubernetes/prometheus.yaml
+      args:
         executable: /bin/bash
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
