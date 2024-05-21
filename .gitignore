@@ -1,2 +1,3 @@
 keys/*
 .vagrant/*
+k3s_node_token
