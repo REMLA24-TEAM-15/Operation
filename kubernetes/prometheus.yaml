@@ -1,10 +1,11 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: myapp-alerts
+  name: app-alerts
+  namespace: monitoring
 spec:
   groups:
-  - name: myapp.rules
+  - name: app.rules
     rules:
     - alert: HighRequestRate
       expr: rate(http_requests_total[1m]) > 15
