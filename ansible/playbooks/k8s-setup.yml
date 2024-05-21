@@ -24,11 +24,9 @@
       args:
         executable: /bin/bash
 
-
     - name: Get k3s node token
       command: cat /var/lib/rancher/k3s/server/node-token
       register: node_token
-      become: true
 
     - name: Save node token
       copy:
@@ -36,14 +34,29 @@
         dest: /vagrant/k3s_node_token
 
     - name: Install Helm dependencies
-      shell: |
-        curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-        sudo apt-get install apt-transport-https --yes
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-        sudo apt-get update
-        sudo apt-get install helm
-      args:
-        executable: /bin/bash
+      apt:
+        name: apt-transport-https
+        state: present
+
+    - name: Add Helm GPG key
+      apt_key:
+        url: https://baltocdn.com/helm/signing.asc
+        state: present
+
+    - name: Add Helm repository
+      apt_repository:
+        repo: "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main"
+        state: present
+        filename: 'helm-stable-debian'
+
+    - name: Update apt repository and cache
+      apt:
+        update_cache: yes
+
+    - name: Install Helm
+      apt:
+        name: helm
+        state: present
 
     - name: Add Prometheus Helm repo
       command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -56,9 +69,7 @@
         executable: /bin/bash
 
     - name: Install Prometheus Operator
-      shell: helm install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
-      args:
-        executable: /bin/bash
+      command: helm install prometheus-operator prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
