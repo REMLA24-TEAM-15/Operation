@@ -5,8 +5,8 @@ Created PR: https://github.com/REMLA24-TEAM-15/Operation/pull/1
 Approved PR: 
 
 -- Marianna Louizidou --
-Created PR:
-Approved PR:
+Created PR: https://github.com/REMLA24-TEAM-15/Operation/pull/1
+Approved PR: https://github.com/REMLA24-TEAM-15/lib-version/pull/4
 
 -- Mitali Patil --
 Created PR:
