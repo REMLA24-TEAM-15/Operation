@@ -15,19 +15,7 @@ Vagrant.configure("2") do |config|
     controller.vm.network "private_network", ip: ip_address_cont, netmask: "255.255.255.0"
     controller.vm.provider "virtualbox" do |v|
       v.memory = 1024 * 4
-      v.cpus = 1
-    end
-
-    controller.vm.provision "ansible" do |ansible|
-      ansible.playbook = "ansible/playbooks/k8s-setup.yml"
-      ansible.compatibility_mode = "2.0"
-      ansible.groups = {
-        "controller_group" => ["controller"]
-      }
-      ansible.extra_vars = {
-            cont_ip: ip_address_cont,
-            node_name: "controller"
-        }
+      v.cpus = 2
     end
   end
 
@@ -46,20 +34,6 @@ Vagrant.configure("2") do |config|
       worker.vm.provider "virtualbox" do |v|
         v.memory = 1024 * 6
         v.cpus = 2
-      end
-
-#       File.write(inventory_filename, "worker#{i} vagrant@#{ip_address}\n", mode: "a+")
-      worker.vm.provision "ansible" do |ansible|
-        ansible.playbook = "ansible/playbooks/k8s-setup.yml"
-#         ansible.inventory_path = "ansible/inventory.cfg"
-        ansible.compatibility_mode = "2.0"
-        ansible.groups = {
-          "worker_group" => ["worker#{i}"]
-        }
-        ansible.extra_vars = {
-            cont_ip: "192.168.56.10",
-            node_name: "worker#{i}"
-        }
       end
     end
   end
