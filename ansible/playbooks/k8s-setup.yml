@@ -1,26 +1,66 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Ensure systemd-timesyncd is enabled and running
-      systemd:
-        name: systemd-timesyncd
-        enabled: yes
-        state: started
-
-    - name: Wait for time synchronization to settle
-      wait_for:
-        timeout: 30
-
     - name: Update apt repository and cache
       apt:
         update_cache: yes
 
-- hosts: controller
+    - name: Add Docker’s official GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        state: present
+
+    - name: Update apt package index after adding Docker repo
+      apt:
+        update_cache: yes
+
+    - name: Install Docker Engine, CLI, and Containerd
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    - name: Create /etc/docker directory
+      file:
+        path: /etc/docker
+        state: directory
+
+    - name: Create docker service directory
+      file:
+        path: /etc/systemd/system/docker.service.d
+        state: directory
+
+    - name: Restart Docker
+      systemd:
+        name: docker
+        enabled: yes
+        daemon_reload: yes
+        state: restarted
+
+    - name: Add user to the docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Enable Docker service
+      systemd:
+        name: docker
+        enabled: yes
+
+- hosts: controller_group
   become: yes
   tasks:
     - name: Install k3s server
       shell: |
-        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik --write-kubeconfig-mode=644 --node-external-ip 192.168.56.0 --flannel-external-ip 192.168.56.0" sh -
+        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" K3S_TOKEN=12345 sh -
       args:
         executable: /bin/bash
 
@@ -63,14 +103,13 @@
 
     - name: Apply Kubernetes YAML files
       shell: |
-        kubectl apply -f /vagrant/kubernetes/node_deployment.yaml
         kubectl apply -f /vagrant/kubernetes/prometheus.yaml
       args:
         executable: /bin/bash
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-- hosts: worker
+- hosts: worker_group
   become: yes
   tasks:
     - name: Fetch node token from controller
@@ -85,6 +124,14 @@
 
     - name: Install k3s agent
       shell: |
-        curl -sfL https://get.k3s.io | K3S_URL=https://192.168.56.2:6443 K3S_TOKEN=$(cat /tmp/k3s_node_token) sh -
+        curl -sfL https://get.k3s.io | K3S_URL=https://{{ cont_ip }}:6443 K3S_TOKEN=12345 K3S_NODE_NAME={{ node_name }} sh -
       args:
         executable: /bin/bash
+
+    - name: Apply Kubernetes YAML files
+      shell: |
+        kubectl apply -f /vagrant/kubernetes/node_deployment.yaml
+      args:
+        executable: /bin/bash
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
