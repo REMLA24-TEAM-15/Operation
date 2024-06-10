@@ -19,3 +19,4 @@ scrape_configs:
   static_configs:
   - targets:
     - 192.168.56.101:8080
+    - 192.168.56.102:8080

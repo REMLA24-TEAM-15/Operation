@@ -24,12 +24,19 @@ def run(target):
             time.sleep(1)
 
 if __name__ == '__main__':
-    urls = 'http://192.168.56.101:8080'
+    urls = ['http://192.168.56.101:8080', 'http://192.168.56.102:8080']
     endpoint = '/query'
 
-    endpoints = urls+endpoint
+    endpoints = [url+endpoint for url in urls]
+    threads = []
 
-    run(endpoints)
+    for endp in endpoints:
+        print(len(endp))
+        for i in range(10):
+            threads.append(threading.Thread(target=run, args=(endp,)))
+
+    [t.start() for t in threads]
+    print("All threads started")
 
     
 
