@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-my-config
+data:
+  model.host: "http://{{ .Release.Name }}-url-model-serv:8081/"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-url-model-depl
+  labels:
+    app: {{ .Release.Name }}-url-model
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-url-model
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-url-model
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-url-model
+        image: {{ .Values.url.imageModel.repository }}:{{ .Values.url.imageModel.tag }}
+        resources:
+          limits:
+            memory: {{ .Values.url.resources.limits.memory }}
+            cpu: {{ .Values.url.resources.limits.cpu }}
+          requests:
+            memory: {{ .Values.url.resources.requests.memory }}
+            cpu: {{ .Values.url.resources.requests.cpu }}
+        ports:
+        - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-url-model-serv
+spec:
+  selector:
+    app: {{ .Release.Name }}-url-model
+  ports:
+    - port: 8081
+      targetPort: 8081
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-url-app-depl
+  labels:
+    app: {{ .Release.Name }}-url-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-url-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-url-app
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-url-app
+        image: {{ .Values.url.imageApp.repository }}:{{ .Values.url.imageApp.tag }}
+        resources:
+          limits:
+            memory: {{ .Values.url.resources.limits.memory }}
+            cpu: {{ .Values.url.resources.limits.cpu }}
+          requests:
+            memory: {{ .Values.url.resources.requests.memory }}
+            cpu: {{ .Values.url.resources.requests.cpu }}
+        ports:
+        - containerPort: 8080
+        env:
+          - name: MODEL_SERVICE_URI
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-my-config
+                key: model.host
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-url-app-serv
+spec:
+  selector:
+    app: {{ .Release.Name }}-url-app
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-my-ingress
+spec:
+  defaultBackend:
+    service:
+      name: {{ .Release.Name }}-url-app-serv
+      port:
+        number: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-monitor-service
+  labels:
+    app: {{ .Release.Name }}-showmetrics-serv
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Release.Name }}-url-app
+  ports:
+    - port: 1234
+      targetPort: 8080
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-mymonitor
+  labels:
+    release: {{ .Values.prometheus.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-showmetrics-serv
+  endpoints:
+  - interval: 1s

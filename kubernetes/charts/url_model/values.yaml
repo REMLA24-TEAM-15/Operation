@@ -1,0 +1,17 @@
+url:
+  imageModel:
+    repository: "ghcr.io/remla24-team-15/model-service"
+    tag: "latest"
+  imageApp:
+    repository: "ghcr.io/remla24-team-15/app"
+    tag: "latest"
+  resources:
+    limits:
+      memory: "1024Mi"
+      cpu: "2"
+    requests:
+      memory: "512Mi"
+      cpu: "2"
+
+prometheus:
+  name: "prometheus"
