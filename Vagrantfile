@@ -11,6 +11,7 @@ Vagrant.configure("2") do |config|
     controller.vm.box = "bento/ubuntu-24.04"
     controller.vm.box_version = "202404.26.0"
     controller.vm.box_check_update = false
+    controller.vm.hostname = "controller"
     ip_address_cont = "192.168.56.10"
     controller.vm.network "private_network", ip: ip_address_cont, netmask: "255.255.255.0"
     controller.vm.provider "virtualbox" do |v|
@@ -27,6 +28,7 @@ Vagrant.configure("2") do |config|
       worker.vm.box = "bento/ubuntu-24.04"
       worker.vm.box_version = "202404.26.0"
       worker.vm.box_check_update = false
+      worker.vm.hostname = "worker#{i}"
 
       ip_address = "192.168.56.#{100+i}"
       worker.vm.network "private_network", ip: ip_address, netmask: "255.255.255.0"

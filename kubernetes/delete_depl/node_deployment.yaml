@@ -8,11 +8,11 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: url-depl
+  name: url-model
   labels:
     app: url-model
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: url-model
@@ -21,6 +21,8 @@ spec:
       labels:
         app: url-model
     spec:
+      nodeSelector:
+        role: worker
       containers:
       - name: url-model
         image: ghcr.io/remla24-team-15/model-service:latest
@@ -41,7 +43,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: url-app-depl
+  name: url-app
   labels:
     app: url-app
 spec:
@@ -54,6 +56,8 @@ spec:
       labels:
         app: url-app
     spec:
+      nodeSelector:
+        role: worker
       containers:
       - name: url-app
         image: ghcr.io/remla24-team-15/app:latest
