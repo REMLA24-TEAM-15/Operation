@@ -24,7 +24,7 @@ def run(target):
             time.sleep(1)
 
 if __name__ == '__main__':
-    urls = ['http://192.168.56.101:8080', 'http://192.168.56.102:8080']
+    urls = ['http://192.168.49.2']
     endpoint = '/query'
 
     endpoints = [url+endpoint for url in urls]

@@ -127,4 +127,4 @@ spec:
     matchLabels:
       app: {{ .Release.Name }}-showmetrics-serv
   endpoints:
-  - interval: 1s
+  - interval: {{ .Values.prometheus.interval }}
