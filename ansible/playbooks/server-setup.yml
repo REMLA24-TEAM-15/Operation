@@ -1,7 +1,7 @@
 ---
 - name: Setup K3S server, install Docker and Helm
-  hosts: all
-  become: yes
+  hosts: controller
+  become: true
 
   vars:
     kubeconfig_path: "/home/{{ ansible_user }}/.kube/config"
@@ -64,15 +64,29 @@
       command: helm repo add prom-repo https://prometheus-community.github.io/helm-charts
       args:
         creates: /home/{{ ansible_user }}/.cache/helm/repository/prom-repo-index.yaml
-      become: no
+      become: false
 
     - name: Update Helm repos
       command: helm repo update
-      become: no
+      become: false
 
     - name: Install Prometheus Helm chart
-      command: helm install prometheus prom-repo/kube-prometheus-stack
-      become: no
+      kubernetes.core.helm:
+        name: prometheus
+        chart_ref: prom-repo/kube-prometheus-stack
+        release_namespace: default
+        values_files: /vagrant/kubernetes/charts/urlapp-kube-prom-stack-values.yaml
+    
+    - name: Install urlapp through helm chart
+      kubernetes.core.helm:
+          name: testing-one
+          chart_ref: /vagrant/kubernetes/charts/url_model
+          release_namespace: default
+
+    - name: Apply grafana dashboard
+      command: kubectl apply -f kubernetes/charts/grafana_dashboard.yaml
+      become: false
+
 
   handlers:
     - name: Restart Docker

@@ -18,6 +18,14 @@ Vagrant.configure("2") do |config|
       v.memory = 1024 * 4
       v.cpus = 2
     end
+    config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/playbooks/server-setup.yml"
+      ansible.extra_vars = {
+        k3s_node_name: "controller",
+        k3s_external_ip: "192.168.56.10",
+        k3s_token: "12345"
+      }
+    end
   end
 
   num_workers = 2
