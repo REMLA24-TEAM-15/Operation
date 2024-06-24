@@ -191,13 +191,35 @@ defaultRules:
 
 ## Provide custom recording or alerting rules to be deployed into the cluster.
 ##
-additionalPrometheusRulesMap: {}
-#  rule-name:
-#    groups:
-#    - name: my_group
-#      rules:
-#      - record: my_record
-#        expr: 100 * my_record
+additionalPrometheusRulesMap: 
+  rule-name:
+    groups:
+      - name: Node
+        rules:
+          - alert: URLAppHostOutOfMemory
+            expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 50) * on(instance) group_left (nodename) node_uname_info{ nodename=~".+" }
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: Host out of memory (instance { { $labels.instance } })
+              description: "Node memory is filling up (< 50% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          - alert: URLAppHostCpuOverutilization
+            expr: sum(rate(container_cpu_usage_seconds_total[1m])) > 2
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: Host cpu over utilization
+              description: "Node cpu is over utilized"
+          - alert: URLAppRateLimit
+            expr: increase(flask_http_request_total[1m]) > 1000
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: Over 1000 requests per minute for 2 minutes
+              description: "Over 1000 requests per minute for 2 minutes"
 
 ##
 global:
