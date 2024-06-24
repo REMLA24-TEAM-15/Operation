@@ -12,17 +12,20 @@ newgrp docker
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
-
-minikube start
-
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 chmod 700 get_helm.sh
 ./get_helm.sh
 
 helm repo add prom-repo https://prometheus-community.github.io/helm-charts
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
 helm repo update
-helm install controllerprom prom-repo/kube-prometheus-stack
+
+helm install -f /vagrant/kubernetes/charts/urlapp-kube-prom-stack-values.yaml prometheus prom-repo/kube-prometheus-stack
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
+helm install testing-one /vagrant/kubernetes/charts/url_model
 
 minikube service controllerprom-kube-promet-prometheus --url
+
+10.0.2.15 grafana-urlapp.local
+10.0.2.15 prometheus-urlapp.local
+10.0.2.15 testing-one-urlapp.local

@@ -96,11 +96,17 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-my-ingress
 spec:
-  defaultBackend:
-    service:
-      name: {{ .Release.Name }}-url-app-serv
-      port:
-        number: 8080
+  rules:
+  - host: "{{ .Release.Name }}-urlapp.local"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}-url-app-serv
+            port:
+              number: 8080
 ---
 apiVersion: v1
 kind: Service
