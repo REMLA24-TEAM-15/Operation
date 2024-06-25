@@ -6,6 +6,9 @@
   vars:
     kubeconfig_path: "/home/{{ ansible_user }}/.kube/config"
     helm_version: "v3.8.2"
+  
+  environment: 
+    KUBECONFIG: "/home/vagrant/.kube/config"
 
   tasks:
     - name: Set environment variables
@@ -61,14 +64,9 @@
       shell: /tmp/get_helm.sh
 
     - name: Add Prometheus Helm repo
-      command: helm repo add prom-repo https://prometheus-community.github.io/helm-charts
-      args:
-        creates: /home/{{ ansible_user }}/.cache/helm/repository/prom-repo-index.yaml
-      become: false
-
-    - name: Update Helm repos
-      command: helm repo update
-      become: false
+      kubernetes.core.helm_repository:
+        name: prom-repo
+        repo_url: https://prometheus-community.github.io/helm-charts
 
     - name: Install Prometheus Helm chart
       kubernetes.core.helm:
@@ -84,7 +82,7 @@
           release_namespace: default
 
     - name: Apply grafana dashboard
-      command: kubectl apply -f kubernetes/charts/grafana_dashboard.yaml
+      command: kubectl apply -f /vagrant/kubernetes/charts/grafana_dashboard.yaml
       become: false
 
 

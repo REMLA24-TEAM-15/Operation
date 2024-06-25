@@ -1,0 +1,53 @@
+- name: Setup K3S Agent, install Docker and Helm
+  hosts: worker1,worker2
+  become: true
+
+  vars:
+    kubeconfig_path: "/home/vagrant/.kube/config"
+    helm_version: "v3.8.2"
+
+  tasks:
+    - name: Set environment variables
+      shell: |
+        export K3S_NODE_NAME={{ k3s_node_name }}
+        export K3S_URL={{ k3s_url }}
+        export K3S_TOKEN={{ k3s_token }}
+        export INSTALL_K3S_EXEC="-- token {{ k3s_token }} --server {{ k3s_url }}"
+      environment:
+        K3S_NODE_NAME: "{{ k3s_node_name }}"
+        K3S_URL: "{{ k3s_url }}"
+        K3S_TOKEN: "{{ k3s_token }}"
+      args:
+        executable: /bin/bash
+
+    - name: Install K3S
+      shell: curl -sfL https://get.k3s.io | sh -
+      environment:
+        INSTALL_K3S_EXEC: "-- token {{ k3s_token }} --server {{ k3s_url }}"
+
+    - name: Download Docker install script
+      get_url:
+        url: https://get.docker.com
+        dest: /tmp/get-docker.sh
+        mode: '0755'
+
+    - name: Run Docker install script
+      shell: sh /tmp/get-docker.sh
+
+    - name: Add user to docker group
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+
+    - name: Enable and start Docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Enable containerd service
+      systemd:
+        name: containerd
+        enabled: yes
+        state: started

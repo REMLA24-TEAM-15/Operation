@@ -1,12 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# inventory_filename = "ansible/inventory.cfg"
-# File.write(inventory_filename, "", mode: "w")
 Vagrant.configure("2") do |config|
 
   # Define the controller VM
-#   File.write(inventory_filename, "[controller]\n", mode: "a+")
   config.vm.define "controller" do |controller|
     controller.vm.box = "bento/ubuntu-24.04"
     controller.vm.box_version = "202404.26.0"
@@ -29,7 +26,6 @@ Vagrant.configure("2") do |config|
   end
 
   num_workers = 2
-#   File.write(inventory_filename, "[worker]\n", mode: "a+")
   # Define worker VMs
   (1..num_workers).each do |i|
     config.vm.define "worker#{i}" do |worker|
@@ -44,6 +40,14 @@ Vagrant.configure("2") do |config|
       worker.vm.provider "virtualbox" do |v|
         v.memory = 1024 * 6
         v.cpus = 2
+      end
+      config.vm.provision "ansible" do |ansible|
+        ansible.playbook = "ansible/playbooks/worker-setup.yml"
+        ansible.extra_vars = {
+          k3s_node_name: "worker#{i}",
+          k3s_url: "https://192.168.56.10:6443",
+          k3s_token: "12345",
+        }
       end
     end
   end
