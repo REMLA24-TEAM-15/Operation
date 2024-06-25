@@ -15,11 +15,11 @@ Vagrant.configure("2") do |config|
       v.memory = 1024 * 4
       v.cpus = 2
     end
-    config.vm.provision "ansible" do |ansible|
+    controller.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/playbooks/server-setup.yml"
       ansible.extra_vars = {
         k3s_node_name: "controller",
-        k3s_external_ip: "192.168.56.10",
+        k3s_external_ip: ip_address_cont,
         k3s_token: "12345"
       }
     end
@@ -34,14 +34,14 @@ Vagrant.configure("2") do |config|
       worker.vm.box_check_update = false
       worker.vm.hostname = "worker#{i}"
 
-      ip_address = "192.168.56.#{100+i}"
+      ip_address = "192.168.56.#{100 + i}"
       worker.vm.network "private_network", ip: ip_address, netmask: "255.255.255.0"
 
       worker.vm.provider "virtualbox" do |v|
         v.memory = 1024 * 6
         v.cpus = 2
       end
-      config.vm.provision "ansible" do |ansible|
+      worker.vm.provision "ansible" do |ansible|
         ansible.playbook = "ansible/playbooks/worker-setup.yml"
         ansible.extra_vars = {
           k3s_node_name: "worker#{i}",

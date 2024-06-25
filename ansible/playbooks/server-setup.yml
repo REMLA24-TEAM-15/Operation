@@ -22,7 +22,7 @@
       args:
         executable: /bin/bash
 
-    - name: Install K3S
+    - name: Install K3S Server
       shell: curl -sfL https://get.k3s.io | sh -
       environment:
         INSTALL_K3S_EXEC: "--token {{ k3s_token }} --write-kubeconfig {{ kubeconfig_path }} --write-kubeconfig-mode 666 --tls-san {{ k3s_external_ip }} --kube-apiserver-arg service-node-port-range=1-65000 --kube-apiserver-arg advertise-address={{ k3s_external_ip }} --kube-apiserver-arg external-hostname={{ k3s_external_ip }}"
