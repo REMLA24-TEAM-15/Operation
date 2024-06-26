@@ -79,6 +79,8 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-my-config
                 key: model.host
+          - name: HELM_NAME
+            value: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service

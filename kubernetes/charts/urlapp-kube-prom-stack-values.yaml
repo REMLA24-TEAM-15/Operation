@@ -3813,8 +3813,29 @@ prometheus:
     ## The scrape configuration example below will find master nodes, provided they have the name .*mst.*, relabel the
     ## port to 2379 and allow etcd scraping provided it is running on all Kubernetes master nodes
     ##
-    additionalScrapeConfigs: []
+    additionalScrapeConfigs:
     # - job_name: kube-etcd
+      # - job_name: istiod
+      #   kubernetes_sd_configs:
+      #   - namespaces:
+      #       names:
+      #       - istio-system
+      #     role: endpoints
+      #   relabel_configs:
+      #   - action: keep
+      #     regex: istiod;http-monitoring
+      #     source_labels:
+      #     - __meta_kubernetes_service_name
+      #     - __meta_kubernetes_endpoint_port_name
+      # - job_name: envoy-stats
+      #   kubernetes_sd_configs:
+      #   - role: pod
+      #   metrics_path: /stats/prometheus
+      #   relabel_configs:
+      #   - action: keep
+      #     regex: .*-envoy-prom
+      #     source_labels:
+      #     - __meta_kubernetes_pod_container_port_name
     #   kubernetes_sd_configs:
     #     - role: node
     #   scheme: https
@@ -3842,6 +3863,7 @@ prometheus:
     #   - regex: (kubernetes_io_hostname|failure_domain_beta_kubernetes_io_region|beta_kubernetes_io_os|beta_kubernetes_io_arch|beta_kubernetes_io_instance_type|failure_domain_beta_kubernetes_io_zone)
     #     action: labeldrop
     #
+
     ## If scrape config contains a repetitive section, you may want to use a template.
     ## In the following example, you can see how to define `gce_sd_configs` for multiple zones
     # additionalScrapeConfigs: |

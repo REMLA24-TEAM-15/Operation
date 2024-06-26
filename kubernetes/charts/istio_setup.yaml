@@ -40,3 +40,20 @@ spec:
         host: testing-two-url-app-serv
         port:
           number: 8080
+  - match:
+    - uri:
+        prefix: /testing-url-app
+    rewrite:
+      uri: /
+    route:
+    - destination: 
+        host: testing-one-url-app-serv
+        port: 
+          number: 8080
+      weight: 90
+    - destination:
+        host: testing-two-url-app-serv
+        port: 
+          number: 8080
+      weight: 10
+
