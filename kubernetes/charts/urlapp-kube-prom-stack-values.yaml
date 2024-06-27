@@ -3815,27 +3815,27 @@ prometheus:
     ##
     additionalScrapeConfigs:
     # - job_name: kube-etcd
-      # - job_name: istiod
-      #   kubernetes_sd_configs:
-      #   - namespaces:
-      #       names:
-      #       - istio-system
-      #     role: endpoints
-      #   relabel_configs:
-      #   - action: keep
-      #     regex: istiod;http-monitoring
-      #     source_labels:
-      #     - __meta_kubernetes_service_name
-      #     - __meta_kubernetes_endpoint_port_name
-      # - job_name: envoy-stats
-      #   kubernetes_sd_configs:
-      #   - role: pod
-      #   metrics_path: /stats/prometheus
-      #   relabel_configs:
-      #   - action: keep
-      #     regex: .*-envoy-prom
-      #     source_labels:
-      #     - __meta_kubernetes_pod_container_port_name
+      - job_name: istiod
+        kubernetes_sd_configs:
+        - namespaces:
+            names:
+            - istio-system
+          role: endpoints
+        relabel_configs:
+        - action: keep
+          regex: istiod;http-monitoring
+          source_labels:
+          - __meta_kubernetes_service_name
+          - __meta_kubernetes_endpoint_port_name
+      - job_name: envoy-stats
+        kubernetes_sd_configs:
+        - role: pod
+        metrics_path: /stats/prometheus
+        relabel_configs:
+        - action: keep
+          regex: .*-envoy-prom
+          source_labels:
+          - __meta_kubernetes_pod_container_port_name
     #   kubernetes_sd_configs:
     #     - role: node
     #   scheme: https
