@@ -3,6 +3,15 @@
 ## Repositories
 https://github.com/orgs/REMLA24-TEAM-15/repositories
 
+## Prerequisites 
+The set up below requires the following things to be installed on the machine:
+1. [MiniKube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download)
+2. [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+3. [Vagrant](https://developer.hashicorp.com/vagrant/docs/installation)
+4. [Istio](https://istio.io/latest/docs/setup/install/)
+5. [Helm](https://helm.sh/docs/intro/install/)
+
+
 ## Get started quick
 ```sh
 ./local_istio_minikube_deploy.sh
