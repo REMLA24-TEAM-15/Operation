@@ -24,7 +24,7 @@ def run(target):
             time.sleep(1)
 
 if __name__ == '__main__':
-    urls = ['http://10.96.115.33/testing-url-app']
+    urls = ['http://10.96.115.33/mirroring-url-app']
     endpoint = '/query'
 
     endpoints = [url+endpoint for url in urls]

@@ -56,4 +56,30 @@ spec:
         port: 
           number: 8080
       weight: 10
-
+  - match:
+    - uri:
+        prefix: /testing-limited
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: limited-url-app-serv
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /mirroring-url-app
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: testing-one-url-app-serv
+        port:
+          number: 8080
+      weight: 100
+    mirror:
+        host: testing-two-url-app-serv
+        port:
+          number: 8080
+    mirrorPercentage:
+      value: 100.0
