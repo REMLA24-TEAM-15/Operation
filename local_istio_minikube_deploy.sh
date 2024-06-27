@@ -40,6 +40,8 @@ helm install -f kubernetes/charts/testing-two-values.yaml testing-two kubernetes
 
 echo "Applying Grafana dashboard configuration from grafana_dashboard.yaml"
 kubectl apply -f kubernetes/charts/grafana_dashboard.yaml
+kubectl apply -f kubernetes/charts/istio_grafana.yaml
+
 
 echo "Applying Istio setup configuration from istio_setup.yaml"
 kubectl apply -f kubernetes/charts/istio_setup.yaml

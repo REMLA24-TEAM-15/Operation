@@ -11,7 +11,7 @@ This command will deploy the following services in a local cluster using minikub
 - 2 instances of url-app helm chart (testing-one, testing-two)
   - Both instances deploy differnt ML models.
   - The versions of the ML model are shown in the app frontend
-  - To directly access the services, append contents of [this file]() to your /etc/hosts
+  - To directly access the services, append contents of [this file](https://github.com/REMLA24-TEAM-15/Operation/blob/main/etc_hosts.txt) to your /etc/hosts
 - Istio service mesh with various endpoints
   - Please follow the instructions to tunnel into the istio services using the instructions given [here](https://github.com/REMLA24-TEAM-15/Operation/blob/main/local_istio_minikube_deploy.sh)
   - `/testing-one`: Routes to `testing-one-url-app-serv:8080`
@@ -19,11 +19,13 @@ This command will deploy the following services in a local cluster using minikub
   - `/testing-url-app`: Routes to `testing-one-url-app-serv:8080` with 90% weight, and `testing-two-url-app-serv:8080` with 10% weight
   - `/mirroring-url-app`: Routes to `testing-one-url-app-serv:8080` with mirroring to `testing-two-url-app-serv:8080`
 - Prometheus & Grafana
-  - To directly access the services, append contents of [this file]() to your /etc/hosts
+  - To directly access the services, append contents of [this file](https://github.com/REMLA24-TEAM-15/Operation/blob/main/etc_hosts.txt) to your /etc/hosts
   - Grafana has two custom dashboards
-    - [URL App]()
-
-
+    - [URL App](http://grafana-urlapp.local/d/_eX4mpl3/url-app-dashboard?orgId=1&refresh=5s)
+    - [Istio](http://grafana-urlapp.local/d/G8wLrJIZk/istio-mesh-dashboard?orgId=1&var-datasource=prometheus)
+- A python [file](https://github.com/REMLA24-TEAM-15/Operation/blob/main/query_generator.py) is used to generate queries and test various models artificially
+  - Remeber to change the IP address in the python file to the correct IP address for Istio.
+  - For testing models without routing through istio, ensure /etc/hosts has been updated as mentioned above.
 
 ## URL App Helm Chart
 A helm chart has been made to deploy the URL app and model deployments. The app of a particular helm chart installation can communicated with the corresponding model deployment only - this is by design.
@@ -39,5 +41,3 @@ vagrant up
 ```
 One controller and 2 worker nodes are defined. The number of worker nodes can be increased by changing num_workers [here](https://github.com/REMLA24-TEAM-15/Operation/blob/main/Vagrantfile#L28). The nodes connect to each other using K3s with the controller node acting as the K3s server.
 The required helm charts, prometheus and grafana are automatically deployed using ansible playbooks
-
-## Monitoring
