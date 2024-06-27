@@ -53,6 +53,8 @@ The required helm charts, prometheus and grafana are automatically deployed usin
 
 ### kubectl from local machine
 To control the kubernetes cluster from the local machine, the kube config needs to be transferred.
+
 Copy /etc/rancher/k3s/k3s.yaml on your machine located outside the cluster as ~/.kube/config. Then replace the value of the server field with the IP or name of your K3s server. kubectl can now manage your K3s cluster.
+
 Check [K3S](https://docs.k3s.io/cluster-access) documentation for more information.
 
