@@ -16,6 +16,8 @@ services:
     container_name: modelservice
     ports:
       - "8081:8081"
+    environment:
+      - RELEASE_URL=https://api.github.com/repos/REMLA24-TEAM-15/model-training/releases/tags/v0.1.0
 
   prometheus:
     image: prom/prometheus

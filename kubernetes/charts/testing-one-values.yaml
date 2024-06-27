@@ -6,7 +6,7 @@ url:
     repository: "ghcr.io/remla24-team-15/app"
     tag: "latest"
   mlModel:
-    url: "https://api.github.com/repos/REMLA24-TEAM-15/model-training/releases/latest"
+    url: https://api.github.com/repos/REMLA24-TEAM-15/model-training/releases/latest
   resources:
     limits:
       memory: "1024Mi"
