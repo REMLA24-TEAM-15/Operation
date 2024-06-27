@@ -1,6 +1,7 @@
 # Operations
 
 ## Repositories
+The project contains the following repositories and each has a detailed ReadMe file that can be used as a guide to set up and run the project. 
 https://github.com/orgs/REMLA24-TEAM-15/repositories
 
 ## Prerequisites 
