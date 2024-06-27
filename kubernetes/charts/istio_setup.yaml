@@ -1,0 +1,85 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: my-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts: ["*"]
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-entry-service
+spec:
+  gateways: [my-gateway]
+  hosts: ["*"]
+  http:
+  - match:
+    - uri:
+        prefix: /testing-one
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: testing-one-url-app-serv
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /testing-two
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: testing-two-url-app-serv
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /testing-url-app
+    rewrite:
+      uri: /
+    route:
+    - destination: 
+        host: testing-one-url-app-serv
+        port: 
+          number: 8080
+      weight: 90
+    - destination:
+        host: testing-two-url-app-serv
+        port: 
+          number: 8080
+      weight: 10
+  - match:
+    - uri:
+        prefix: /testing-limited
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: limited-url-app-serv
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /mirroring-url-app
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: testing-one-url-app-serv
+        port:
+          number: 8080
+      weight: 100
+    mirror:
+        host: testing-two-url-app-serv
+        port:
+          number: 8080
+    mirrorPercentage:
+      value: 100.0

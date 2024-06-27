@@ -1,0 +1,3 @@
+[submodule "kubernetes/kubeview"]
+	path = kubernetes/kubeview
+	url = git@github.com:benc-uk/kubeview.git

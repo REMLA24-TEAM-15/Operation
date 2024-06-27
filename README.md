@@ -1,4 +1,15 @@
-# Vagrant and Ansible Setup
+# Operations
+
+## Repositories
+https://github.com/orgs/REMLA24-TEAM-15/repositories
+
+## Get started quick
+
+There 
+
+
+## URL App Helm Chart
+
 
 ## Todo:
 The repository contains a README.md , which provides a concise documentation that includes... – An explanation on how to start the application (e.g., parameters, variables, requirements).

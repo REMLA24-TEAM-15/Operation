@@ -1,0 +1,93 @@
+---
+- name: Setup K3S server, install Docker and Helm
+  hosts: controller
+  become: true
+
+  vars:
+    kubeconfig_path: "/home/{{ ansible_user }}/.kube/config"
+    helm_version: "v3.8.2"
+  
+  environment: 
+    KUBECONFIG: "/home/vagrant/.kube/config"
+
+  tasks:
+    - name: Set environment variables
+      shell: |
+        export K3S_NODE_NAME={{ k3s_node_name }}
+        export K3S_EXTERNAL_IP={{ k3s_external_ip }}
+        export INSTALL_K3S_EXEC="--token {{ k3s_token }} --write-kubeconfig {{ kubeconfig_path }} --write-kubeconfig-mode 666 --tls-san $K3S_EXTERNAL_IP --kube-apiserver-arg service-node-port-range=1-65000 --kube-apiserver-arg advertise-address=$K3S_EXTERNAL_IP --kube-apiserver-arg external-hostname=$K3S_EXTERNAL_IP"
+      environment:
+        K3S_NODE_NAME: "{{ k3s_node_name }}"
+        K3S_EXTERNAL_IP: "{{ k3s_external_ip }}"
+      args:
+        executable: /bin/bash
+
+    - name: Install K3S Server
+      shell: curl -sfL https://get.k3s.io | sh -
+      environment:
+        INSTALL_K3S_EXEC: "--token {{ k3s_token }} --write-kubeconfig {{ kubeconfig_path }} --write-kubeconfig-mode 666 --tls-san {{ k3s_external_ip }} --kube-apiserver-arg service-node-port-range=1-65000 --kube-apiserver-arg advertise-address={{ k3s_external_ip }} --kube-apiserver-arg external-hostname={{ k3s_external_ip }}"
+
+    - name: Download Docker install script
+      get_url:
+        url: https://get.docker.com
+        dest: /tmp/get-docker.sh
+        mode: '0755'
+
+    - name: Run Docker install script
+      shell: sh /tmp/get-docker.sh
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Enable and start Docker service
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Enable containerd service
+      systemd:
+        name: containerd
+        enabled: yes
+        state: started
+
+    - name: Download Helm install script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0755'
+
+    - name: Install Helm
+      shell: /tmp/get_helm.sh
+
+    - name: Add Prometheus Helm repo
+      kubernetes.core.helm_repository:
+        name: prom-repo
+        repo_url: https://prometheus-community.github.io/helm-charts
+
+    - name: Install Prometheus Helm chart
+      kubernetes.core.helm:
+        name: prometheus
+        chart_ref: prom-repo/kube-prometheus-stack
+        release_namespace: default
+        values_files: /vagrant/kubernetes/charts/urlapp-kube-prom-stack-values.yaml
+    
+    - name: Install urlapp through helm chart
+      kubernetes.core.helm:
+          name: testing-one
+          chart_ref: /vagrant/kubernetes/charts/url_model
+          release_namespace: default
+
+    - name: Apply grafana dashboard
+      command: kubectl apply -f /vagrant/kubernetes/charts/grafana_dashboard.yaml
+      become: false
+
+
+  handlers:
+    - name: Restart Docker
+      systemd:
+        name: docker
+        state: restarted
