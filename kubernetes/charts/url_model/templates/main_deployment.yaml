@@ -33,6 +33,9 @@ spec:
             cpu: {{ .Values.url.resources.requests.cpu }}
         ports:
         - containerPort: 8081
+        env:
+          - name: RELEASE_URL
+            value: {{ .Values.url.mlModel.url }}
 ---
 apiVersion: v1
 kind: Service
