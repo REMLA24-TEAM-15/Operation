@@ -44,6 +44,10 @@ For experimenting new models (Continous experimentation), the URL to a different
 The path to the model can be specified in url.mlModel.url in the values.yaml file. Illustrated in [testing-one](https://github.com/REMLA24-TEAM-15/Operation/blob/main/kubernetes/charts/testing-one-values.yaml) and [testing-two](https://github.com/REMLA24-TEAM-15/Operation/blob/main/kubernetes/charts/testing-two-values.yaml)
 
 ## Vagrant & Ansible provisioning
+First set a k3s token
+```sh
+$env:K3S_TOKEN=<your_k3s_token>
+```
 The Virtual machines can be created and provisioned using the command
 ```sh
 vagrant up

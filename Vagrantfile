@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
       ansible.extra_vars = {
         k3s_node_name: "controller",
         k3s_external_ip: ip_address_cont,
-        k3s_token: "12345"
+        k3s_token: ENV['K3S_TOKEN']
       }
     end
   end
@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
         ansible.extra_vars = {
           k3s_node_name: "worker#{i}",
           k3s_url: "https://192.168.56.10:6443",
-          k3s_token: "12345",
+          k3s_token: ENV['K3S_TOKEN'],
         }
       end
     end
