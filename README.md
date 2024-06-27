@@ -59,3 +59,7 @@ Copy /etc/rancher/k3s/k3s.yaml on your machine located outside the cluster as ~/
 
 Check [K3S](https://docs.k3s.io/cluster-access) documentation for more information.
 
+
+## Tokens Required:
+For this repository you require a GitHub token (e.g GH_Token) with package and repo read/write permissions. 
+
