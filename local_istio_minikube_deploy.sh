@@ -22,10 +22,11 @@ helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
 echo "Updating Helm repositories"
 helm repo update
 
-echo "Waiting for 10 seconds to ensure repositories are updated"
+echo "Waiting for 10 seconds to ensure required pods are deployed"
 sleep 10
 
 echo "Installing the Prometheus stack with custom values in the 'prometheus' namespace"
+kubectl create namespace prometheus
 helm install -f kubernetes/charts/urlapp-kube-prom-stack-values.yaml prometheus prom-repo/kube-prometheus-stack -n prometheus
 
 echo "Installing the Kubernetes Dashboard in the 'kubernetes-dashboard' namespace"
@@ -42,3 +43,11 @@ kubectl apply -f kubernetes/charts/grafana_dashboard.yaml
 
 echo "Applying Istio setup configuration from istio_setup.yaml"
 kubectl apply -f kubernetes/charts/istio_setup.yaml
+
+echo "To access services on Istio, Run: "
+echo "minikube tunnel"
+
+echo "To get the IP on which the Istio services are running, Run: "
+echo "kubectl get svc istio-ingressgateway -n istio-system"
+
+echo "See ReadMe for the endpoints available for Istio"

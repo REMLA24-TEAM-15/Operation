@@ -1,0 +1,4 @@
+192.168.49.2 grafana-urlapp.local
+192.168.49.2 prometheus-urlapp.local
+192.168.49.2 testing-one-urlapp.local
+192.168.49.2 testing-two-urlapp.local
